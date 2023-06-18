@@ -3,3 +3,4 @@
 .clj-kondo
 .calva
 .m2
+.nrepl-port
