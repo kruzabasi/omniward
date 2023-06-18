@@ -1,0 +1,10 @@
+{:paths          ["src"]
+ :mvn/local-repo ".m2"
+ 
+ :deps    {org.clojure/clojure  {:mvn/version "1.11.1"}
+           integrant/integrant  {:mvn/version "0.8.0"}
+           ring/ring            {:mvn/version "1.10.0"}
+           metosin/reitit       {:mvn/version "0.7.0-alpha3"}}
+ 
+ :aliases {:dev {:extra-paths ["env/dev"]
+                 :extra-deps  {integrant/repl        {:mvn/version "0.3.2"}}}}}
