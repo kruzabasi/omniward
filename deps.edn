@@ -1,10 +1,13 @@
 {:paths          ["src"]
  :mvn/local-repo ".m2"
  
- :deps    {org.clojure/clojure  {:mvn/version "1.11.1"}
-           integrant/integrant  {:mvn/version "0.8.0"}
-           ring/ring            {:mvn/version "1.10.0"}
-           metosin/reitit       {:mvn/version "0.7.0-alpha3"}}
+ :deps    {org.clojure/clojure   {:mvn/version "1.11.1"}
+           org.clojure/java.jdbc {:mvn/version "0.7.12"}
+           integrant/integrant   {:mvn/version "0.8.0"}
+           ring/ring             {:mvn/version "1.10.0"}
+           metosin/reitit        {:mvn/version "0.7.0-alpha3"}
+           org.postgresql/postgresql           {:mvn/version "42.6.0"}
+           clojure.java-time/clojure.java-time {:mvn/version "1.2.0"}}
  
  :aliases {:dev {:extra-paths ["env/dev"]
-                 :extra-deps  {integrant/repl        {:mvn/version "0.3.2"}}}}}
+                 :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}}}
