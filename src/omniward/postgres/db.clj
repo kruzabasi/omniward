@@ -1,7 +1,8 @@
 (ns omniward.postgres.db
   (:require [integrant.core :as ig]
             [integrant.repl.state :refer [system]]
-            [clojure.java.jdbc :as j]))
+            [clojure.java.jdbc :as j]
+            [java-time.api :as jt]))
 
 (defmethod ig/init-key ::pg-db
   [_ config]
@@ -24,3 +25,14 @@
 (defn create-patients-table []
   (let [db-spec (get-db)]
     (j/execute! db-spec patients-sql)))
+
+(defn insert-patient 
+  [db-spec patient]
+  (let [{:keys [p-name gender dob address phone]} patient]
+    (j/insert!
+     db-spec
+     :patient {:name    p-name
+               :gender  gender
+               :dob     (jt/local-date (jt/sql-date dob))
+               :address address
+               :phone   phone})))
