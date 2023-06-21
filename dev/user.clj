@@ -1,8 +1,7 @@
 (ns user
-  (:require
-   [clojure.java.io :as io]
-   [integrant.core :as ig]
-   [integrant.repl :as ig-repl]))
+  (:require [clojure.java.io :as io]
+            [integrant.core :as ig]
+            [integrant.repl :as ig-repl]))
 
 (ig-repl/set-prep!
  (fn []
