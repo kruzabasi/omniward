@@ -26,13 +26,16 @@
   (let [db-spec (get-db)]
     (j/execute! db-spec patients-sql)))
 
-(defn insert-patient 
-  [db-spec patient]
-  (let [{:keys [p-name gender dob address phone]} patient]
-    (j/insert!
-     db-spec
-     :patient {:name    p-name
-               :gender  gender
-               :dob     (jt/local-date (jt/sql-date dob))
-               :address address
-               :phone   phone})))
+(defn insert-patient
+  ([db-spec patient]
+   (insert-patient db-spec patient :patient))
+
+  ([db-spec patient table]
+   (let [{:keys [p-name gender dob address phone]} patient]
+     (j/insert!
+      db-spec
+      table {:name    p-name
+             :gender  gender
+             :dob     (jt/local-date (jt/sql-date dob))
+             :address address
+             :phone   phone}))))
