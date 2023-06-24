@@ -36,3 +36,12 @@
                :dob     (jt/local-date (jt/sql-date dob))
                :address address
                :phone   phone})))
+
+(defn update-patient
+  [db-spec patient]
+  (let [{:keys [update-val update-where]} patient]
+    (j/update!
+     db-spec
+     :patient
+     update-val
+     update-where)))
