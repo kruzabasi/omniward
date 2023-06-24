@@ -8,6 +8,7 @@
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as coercion-spec]
             [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.middleware.parameters :as parameters]
             
             [omniward.handlers :as handler]))
 
@@ -22,6 +23,7 @@
           :middleware [muuntaja/format-middleware
                        coercion/coerce-request-middleware
                        coercion/coerce-response-middleware
+                       parameters/parameters-middleware
                        mw/wrap-sys]}})
 
 (defn test-handler[_]
@@ -48,7 +50,11 @@
      {:get {:handler    test-handler
             :responses  {200 {:body string?}}
             :parameters {}
-            :summary    "Test"}}]]])
+            :summary    "Test"}
+      :put {:handler    handler/update-patient
+            :responses  {200 {:body map?}
+                         400 {:body string?}
+                         404 {:body string?}}}}]]])
 
 (defn routes
   [sys]
