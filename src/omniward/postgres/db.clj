@@ -26,6 +26,12 @@
   (let [db-spec (get-db)]
     (j/execute! db-spec patients-sql)))
 
+(defn get-patient-info
+  [db-spec patient-id]
+  (j/query 
+   db-spec 
+   ["select * from patient where patient_id = ?" patient-id]))
+
 (defn insert-patient
   [db-spec patient]
   (let [{:keys [p-name gender dob address phone]} patient]

@@ -2,8 +2,18 @@
   (:require
     [clojure.java.jdbc :as j]
     [clojure.test :refer [is testing deftest] :as t]
-    [omniward.postgres.db :refer [insert-patient update-patient]]
+    [omniward.postgres.db :refer [insert-patient update-patient get-patient-info]]
     [test-common :refer [test-db-spec patient-data create-test-db drop-test-db]]))
+
+(deftest get-patient-info-test
+  (create-test-db)
+  (testing "Fetching a patients info from db"
+    (insert-patient test-db-spec patient-data)
+    (let [patient-info (first (get-patient-info test-db-spec 1))
+          non-patient  (first (get-patient-info test-db-spec 100))]
+      (is (not-empty  patient-info))
+      (is (empty? non-patient))))
+  (drop-test-db))
 
 (deftest insert-patient-test
   (create-test-db)

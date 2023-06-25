@@ -1,6 +1,21 @@
 (ns omniward.handlers
   (:require [omniward.postgres.db :as db]))
 
+(defn get-patient
+  [{:keys [parameters sys]}]
+  (try
+    (let [db-spec      (-> sys :postgres)
+          patient-id   (Integer/parseInt (-> parameters :path :id))
+          patient-info (first (db/get-patient-info db-spec patient-id))]
+      (if patient-info
+        {:status 200
+         :body {:data patient-info}}
+        {:status 404
+         :body (str "Patient with id: " patient-id " does not exist")}))
+    (catch NumberFormatException _
+      {:status 400
+       :body "Invalid Patient ID"})))
+
 (defn new-patient!
   [{:keys [parameters sys]}]
   (let [patient-data (-> parameters :body)
