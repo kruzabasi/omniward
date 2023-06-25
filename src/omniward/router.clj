@@ -51,7 +51,7 @@
             :responses  {200 {:body string?}}
             :parameters {}
             :summary    "Test"}
-      :put {:handler    handler/update-patient
+      :put {:handler    handler/modify-patient!
             :responses  {200 {:body map?}
                          400 {:body string?}
                          404 {:body string?}}}}]]])

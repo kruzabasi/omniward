@@ -3,15 +3,7 @@
     [clojure.java.jdbc :as j]
     [clojure.test :refer [is testing deftest] :as t]
     [omniward.postgres.db :refer [insert-patient update-patient]]
-    [java-time.api :as jt]
-    [test-common :refer [test-db-spec create-test-db drop-test-db]]))
-
-(def patient-data
-  {:p-name "Jane Smith"
-   :gender "Female"
-   :dob (jt/local-date (jt/sql-date 1995 6 21))
-   :address "456 Elm St"
-   :phone "555-5678"})
+    [test-common :refer [test-db-spec patient-data create-test-db drop-test-db]]))
 
 (deftest insert-patient-test
   (create-test-db)
@@ -31,7 +23,7 @@
                               ["select patient_id from patient where name = ?" "Jane Smith"])
                              first
                              :patient_id)
-          patient-update {:update-where ["patient_id=?" patient-id]
+          patient-update {:patient-id patient-id
                           :update-val   {:gender "Male"}}]
       (is (= 1 (first (update-patient test-db-spec patient-update))))
       (let [updated-patient (j/query 

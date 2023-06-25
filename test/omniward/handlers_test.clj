@@ -1,18 +1,13 @@
 (ns omniward.handlers-test
   (:require [clojure.test :refer [is testing deftest] :as t]
-            [java-time.api :as jt]
-            [test-common :refer [test-db-spec create-test-db drop-test-db]]
-            [omniward.handlers :refer [new-patient!]]))
+            [test-common :refer [test-db-spec patient-data create-test-db drop-test-db]]
+            [omniward.postgres.db :refer [insert-patient]]
+            [omniward.handlers :refer [new-patient! modify-patient!]]))
 
 (deftest new-patient!-test
   (create-test-db)
-  (let [patient-data {:p-name "Jane Smith"
-                      :gender "Female"
-                      :dob (jt/local-date (jt/sql-date 1995 6 21))
-                      :address "456 Elm St"
-                      :phone "555-5678"}
-        args         {:sys {:postgres test-db-spec}
-                      :parameters {:body patient-data}}]
+  (let [args {:sys {:postgres test-db-spec}
+              :parameters {:body patient-data}}]
     (testing "Inserting a new patient!"
       (let [res (new-patient! args)]
         (is (= 201 (:status res)))
@@ -20,6 +15,27 @@
     (testing "Inserting an existing patient!"
       (let [res (new-patient! args)]
         (is (= 409 (:status res))))))
+  (drop-test-db))
+
+(deftest modify-patient!-test
+  (create-test-db)
+  (let [args {:sys {:postgres test-db-spec}
+              :path-params  {:id "1"}
+              :query-params {"address" "102 Palm Ave, Vienna"}}]
+    (insert-patient test-db-spec patient-data)
+    (testing "Modifying a patients record!"
+      (let [res (modify-patient! args)]
+        (is (= 200 (:status res)))
+        (is (= "102 Palm Ave, Vienna" (-> res :body :data :address)))))
+    (testing "Modifying a non-existent patients record!"
+      (let [args (assoc-in args [:path-params :id] "12")
+            res  (modify-patient! args)]
+        (is (= 404 (:status res)))))
+    (testing "Modifying a patients record with wrong params"
+      (let [args (assoc args :query-params {"wrong" "params"})
+            res  (modify-patient! args)]
+        (is (= 400 (:status res)))
+        (is (= "Missing or Invalid Parameters" (:body res))))))
   (drop-test-db))
 
 (comment

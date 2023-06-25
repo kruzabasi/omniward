@@ -39,9 +39,9 @@
 
 (defn update-patient
   [db-spec patient]
-  (let [{:keys [update-val update-where]} patient]
+  (let [{:keys [update-val patient-id]} patient]
     (j/update!
      db-spec
      :patient
      update-val
-     update-where)))
+     ["patient_id=?" patient-id])))
