@@ -71,3 +71,21 @@
       (catch NumberFormatException _
         {:status 400
          :body "Invalid Patient ID"}))))
+
+(defn delete-patient!
+  [{:keys [parameters sys]}]
+  (try
+    (let [db-spec      (-> sys :postgres)
+          patient-id   (Integer/parseInt (-> parameters :path :id))
+          db-res       (first (db/delete-patient db-spec patient-id))]
+      (cond
+        (= 1 db-res) {:status 200
+                      :body "Patient record deleted successfully"}
+        (= 0 db-res) {:status 404
+                      :body (str "Patient with id: " patient-id " does not exist")}))
+    (catch NumberFormatException _
+      {:status 400
+       :body "Invalid Patient ID"})
+    (catch Exception _
+      {:status 500
+       :body   "Failed to delete patient record"})))

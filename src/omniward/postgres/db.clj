@@ -63,3 +63,7 @@
      :patient
      update-val
      ["patient_id=?" patient-id])))
+
+(defn delete-patient
+  [db-spec patient-id]
+  (j/delete! db-spec :patient ["patient_id=?" patient-id]))
