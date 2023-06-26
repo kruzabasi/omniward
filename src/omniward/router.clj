@@ -59,4 +59,5 @@
   (ring/ring-handler
    (ring/router
     (api-routes)
-    (router-config sys))))
+    (router-config sys))
+   (ring/create-default-handler)))
