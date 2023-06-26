@@ -2,23 +2,31 @@
   (:require
     [clojure.java.jdbc :as j]
     [clojure.test :refer [is testing deftest] :as t]
-    [omniward.postgres.db :refer [insert-patient update-patient get-patient-info]]
+    [omniward.postgres.db :refer [insert-patient] :as SUT]
     [test-common :refer [test-db-spec patient-data create-test-db drop-test-db]]))
 
 (deftest get-patient-info-test
   (create-test-db)
-  (testing "Fetching a patients info from db"
+  (testing "Querying a patients info from db"
     (insert-patient test-db-spec patient-data)
-    (let [patient-info (first (get-patient-info test-db-spec 1))
-          non-patient  (first (get-patient-info test-db-spec 100))]
+    (let [patient-info (first (SUT/get-patient-info test-db-spec 1))
+          non-patient  (first (SUT/get-patient-info test-db-spec 100))]
       (is (not-empty  patient-info))
       (is (empty? non-patient))))
+  (drop-test-db))
+
+(deftest get-patients-test
+  (create-test-db)
+  (testing "Querying for all patients"
+    (is (empty? (SUT/get-patients test-db-spec)))
+    (insert-patient test-db-spec patient-data)
+    (is (not-empty (SUT/get-patients test-db-spec))))
   (drop-test-db))
 
 (deftest insert-patient-test
   (create-test-db)
     (testing "Inserting a new patients record to db"
-      (is (-> (insert-patient test-db-spec patient-data)
+      (is (-> (SUT/insert-patient test-db-spec patient-data)
               first
               :patient_id
               int?)))
@@ -35,7 +43,7 @@
                              :patient_id)
           patient-update {:patient-id patient-id
                           :update-val   {:gender "Male"}}]
-      (is (= 1 (first (update-patient test-db-spec patient-update))))
+      (is (= 1 (first (SUT/update-patient test-db-spec patient-update))))
       (let [updated-patient (j/query 
                              test-db-spec 
                              ["select * from patient where patient_id = ?" patient-id])]
