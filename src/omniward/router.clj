@@ -2,7 +2,6 @@
   (:require [muuntaja.core :as m]
             [reitit.ring :as ring]
             [reitit.ring.spec :as rs]
-            [ring.util.response :as rr]
             [omniward.middleware :as mw]
             [reitit.dev.pretty :as pretty]
             [reitit.ring.coercion :as coercion]
@@ -26,17 +25,13 @@
                        parameters/parameters-middleware
                        mw/wrap-sys]}})
 
-(defn test-handler[_]
-  (rr/response "Hello"))
-
 (defn api-routes []
   ["/api"
    ["/patients"
     [""
-     {:get  {:handler    test-handler
-             :responses  {200 {:body string?}}
-             :parameters {}
-             :summary    "Test"}
+     {:get  {:summary    "Fetches all patients"
+             :responses  {200 {:body map?}}
+             :handler    handler/get-all-patients}
       :post {:summary    "Creates a new patient record"
              :parameters {:body {:p-name string?
                                  :gender string?

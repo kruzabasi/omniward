@@ -32,6 +32,18 @@
    db-spec 
    ["select * from patient where patient_id = ?" patient-id]))
 
+(defn get-patients
+  ([db-spec]
+   (get-patients db-spec {:offset nil :limit 100}))
+  
+  ([db-spec {:keys [offset limit]}]
+   (let [limit     (or limit 100)
+         query-str (cond-> (str "select * from patient limit " limit)
+                     offset (str " offset " offset))]
+     (j/query
+      db-spec
+      [query-str]))))
+
 (defn insert-patient
   [db-spec patient]
   (let [{:keys [p-name gender dob address phone]} patient]

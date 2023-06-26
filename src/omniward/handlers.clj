@@ -1,6 +1,17 @@
 (ns omniward.handlers
   (:require [omniward.postgres.db :as db]))
 
+(defn get-all-patients
+  [{:keys [query-params sys]}]
+  (let [{:strs [offset limit]} query-params
+        db-spec (-> sys :postgres)
+        res     (into []
+                      (db/get-patients
+                       db-spec
+                       {:offset offset :limit limit}))]
+    {:status 200
+     :body {:data res}}))
+
 (defn get-patient
   [{:keys [parameters sys]}]
   (try
