@@ -1,21 +1,18 @@
 (ns omniward.handlers-test
-  (:require [clojure.test :refer [is testing deftest] :as t]
-            [test-common :refer [test-db-spec patient-data create-test-db drop-test-db]]
+  (:require [clojure.test :refer [is testing deftest use-fixtures] :as t]
+            [test-common :refer [test-db-spec patient-data db-fixture]]
             [omniward.postgres.db :refer [insert-patient]]
             [omniward.handlers :as SUT]))
 
 (deftest get-all-patients-test
-  (create-test-db)
   (testing "Fetching all patients"
     (insert-patient test-db-spec patient-data)
     (let [args {:sys {:postgres test-db-spec}}
           res  (SUT/get-all-patients args)]
       (is (= 200 (:status res)))
-      (is (not-empty (-> res :body :data)))))
-  (drop-test-db))
+      (is (not-empty (-> res :body :data))))))
 
 (deftest new-patient!-test
-  (create-test-db)
   (let [args {:sys {:postgres test-db-spec}
               :parameters {:body patient-data}}]
     (testing "Inserting a new patient!"
@@ -24,11 +21,9 @@
         (is (int? (-> res :body :data :patient_id)))))
     (testing "Inserting an existing patient!"
       (let [res (SUT/new-patient! args)]
-        (is (= 409 (:status res))))))
-  (drop-test-db))
+        (is (= 409 (:status res)))))))
 
 (deftest get-patient-test
-  (create-test-db)
   (let [args {:sys {:postgres test-db-spec}
               :parameters {:path {:id "1"}}}]
     (insert-patient test-db-spec patient-data)
@@ -44,11 +39,9 @@
       (let [args (assoc-in args [:parameters :path :id] "id")
             res  (SUT/get-patient args)]
         (is (= 400 (:status res)))
-        (is (= "Invalid Patient ID" (:body res))))))
-  (drop-test-db))
+        (is (= "Invalid Patient ID" (:body res)))))))
 
 (deftest modify-patient!-test
-  (create-test-db)
   (let [args {:sys {:postgres test-db-spec}
               :path-params  {:id "1"}
               :query-params {"address" "102 Palm Ave, Vienna"}}]
@@ -65,11 +58,9 @@
       (let [args (assoc args :query-params {"wrong" "params"})
             res  (SUT/modify-patient! args)]
         (is (= 400 (:status res)))
-        (is (= "Missing or Invalid Parameters" (:body res))))))
-  (drop-test-db))
+        (is (= "Missing or Invalid Parameters" (:body res)))))))
 
 (deftest delete-patient!-test
-  (create-test-db)
   (insert-patient test-db-spec patient-data)
   (let [args {:sys {:postgres test-db-spec}
               :parameters {:path {:id "1"}}}]
@@ -84,8 +75,9 @@
       (let [args (assoc-in args [:parameters :path :id] "id")
             res  (SUT/get-patient args)]
         (is (= 400 (:status res)))
-        (is (= "Invalid Patient ID" (:body res))))))
-  (drop-test-db))
+        (is (= "Invalid Patient ID" (:body res)))))))
+
+(use-fixtures :each db-fixture)
 
 (comment
   (t/run-tests *ns*))

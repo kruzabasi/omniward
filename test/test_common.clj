@@ -32,3 +32,10 @@
    :dob (jt/local-date (jt/sql-date 1995 6 21))
    :address "456 Elm St"
    :phone "555-5678"})
+
+(defn db-fixture
+  [test-fn]
+  (try
+    (create-test-db)
+    (test-fn)
+    (finally (drop-test-db))))
