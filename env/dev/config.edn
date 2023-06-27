@@ -4,5 +4,5 @@
  :omniward.postgres.db/pg-db {:dbtype "postgresql"
                               :port 5432
                               :user "admin"
-                              :dbname "admin"
+                              :dbname "omniward"
                               :password "admin"}}

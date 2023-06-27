@@ -29,30 +29,30 @@
   ["/api"
    ["/patients"
     [""
-     {:get  {:summary    "Fetches all patients"
-             :responses  {200 {:body map?}}
-             :handler    handler/get-all-patients}
-      :post {:summary    "Creates a new patient record"
-             :parameters {:body {:p-name string?
-                                 :gender string?
-                                 :dob string?
-                                 :address string?
-                                 :phone string?}}
-             :responses  {201 {:body map?}
-                          409 {:body string?}}
-             :handler    handler/new-patient!}}]
+     {:get    {:summary    "Fetches all patients"
+               :responses  {200 {:body map?}}
+               :handler    handler/get-all-patients}
+      :post   {:summary    "Creates a new patient record"
+               :parameters {:body {:p-name string?
+                                   :gender string?
+                                   :dob string?
+                                   :address string?
+                                   :phone string?}}
+               :responses  {201 {:body map?}
+                            409 {:body string?}}
+               :handler    handler/new-patient!}}]
     ["/:id"
-     {:get {:summary     "Fetches info of a particular patient"
-            :responses   {200 {:body map?}
-                          400 {:body string?}
-                          404 {:body string?}}
-            :parameters  {:path {:id string?}}
-            :handler     handler/get-patient}
-      :put {:summary     "Updates an existing patients record"
-            :responses   {200 {:body map?}
-                          400 {:body string?}
-                          404 {:body string?}}
-            :handler    handler/modify-patient!}
+     {:get    {:summary     "Fetches info of a particular patient"
+               :responses   {200 {:body map?}
+                             400 {:body string?}
+                             404 {:body string?}}
+               :parameters  {:path {:id string?}}
+               :handler     handler/get-patient}
+      :put    {:summary     "Updates an existing patients record"
+               :responses   {200 {:body map?}
+                             400 {:body string?}
+                             404 {:body string?}}
+               :handler    handler/modify-patient!}
       :delete {:summary "Delete a patients record"
                :responses   {200 {:body string?}
                              400 {:body string?}
