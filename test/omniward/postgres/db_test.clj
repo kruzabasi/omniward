@@ -42,13 +42,22 @@
                              first
                              :patient_id)
           patient-update {:patient-id patient-id
-                          :update-val   {:gender "Male"}}]
+                          :update-val {:gender "Male"}}]
       (is (= 1 (first (SUT/update-patient test-db-spec patient-update))))
       (let [updated-patient (j/query 
                              test-db-spec 
                              ["select * from patient where patient_id = ?" patient-id])]
         (is (= "Male" (-> updated-patient first :gender)))
         (is (= "Jane Smith" (-> updated-patient first :name))))))
+  (drop-test-db))
+
+(deftest delete-patient-test
+  (create-test-db)
+  (testing "Deleting a patients record"
+    (insert-patient test-db-spec patient-data)
+    (is (not-empty (SUT/get-patients test-db-spec)))
+    (SUT/delete-patient test-db-spec 1)
+    (is (empty? (SUT/get-patients test-db-spec))))
   (drop-test-db))
 
 (comment

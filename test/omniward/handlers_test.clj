@@ -68,5 +68,24 @@
         (is (= "Missing or Invalid Parameters" (:body res))))))
   (drop-test-db))
 
+(deftest delete-patient!-test
+  (create-test-db)
+  (insert-patient test-db-spec patient-data)
+  (let [args {:sys {:postgres test-db-spec}
+              :parameters {:path {:id "1"}}}]
+    (testing "Requesting deletion of a patients record"
+      (let [res (SUT/delete-patient! args)]
+        (is (= 200 (:status res)))))
+    (testing "Requesting deletion of a non-existent record"
+      (let [args (assoc-in args [:parameters :path :id] "18")
+            res (SUT/delete-patient! args)]
+        (is (= 404 (:status res)))))
+    (testing "Requesting deletion with invalid ID"
+      (let [args (assoc-in args [:parameters :path :id] "id")
+            res  (SUT/get-patient args)]
+        (is (= 400 (:status res)))
+        (is (= "Invalid Patient ID" (:body res))))))
+  (drop-test-db))
+
 (comment
   (t/run-tests *ns*))
