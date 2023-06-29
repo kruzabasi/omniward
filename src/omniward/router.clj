@@ -6,6 +6,7 @@
             [reitit.dev.pretty :as pretty]
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as coercion-spec]
+            [ring.middleware.cors :refer [wrap-cors]]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.parameters :as parameters]
             
@@ -23,7 +24,11 @@
                        coercion/coerce-request-middleware
                        coercion/coerce-response-middleware
                        parameters/parameters-middleware
-                       mw/wrap-sys]}})
+                       mw/wrap-sys
+                       [wrap-cors
+                        :access-control-allow-origin [#".*"]
+                        :access-control-allow-credentials "true"
+                        :access-control-allow-methods #{:get :put :post :delete}]]}})
 
 (defn api-routes []
   ["/api"
