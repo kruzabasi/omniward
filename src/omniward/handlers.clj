@@ -1,5 +1,7 @@
 (ns omniward.handlers
-  (:require [omniward.postgres.db :as db]))
+  (:require
+   [omniward.postgres.db :as db]
+   [java-time.api :as jt]))
 
 (defn get-all-patients
   [{:keys [query-params sys]}]
@@ -51,10 +53,10 @@
     (try
       (let [patient-id   (Integer/parseInt (:id path-params))
             update-val   (cond-> {}
-                           p-name (assoc :name p-name)
-                           dob (assoc :dob dob)
-                           gender (assoc :gender gender)
-                           phone (assoc :phone phone)
+                           p-name  (assoc :name p-name)
+                           dob     (assoc :dob (jt/local-date  dob))
+                           gender  (assoc :gender gender)
+                           phone   (assoc :phone phone)
                            address (assoc :address address))]
         (if (empty? update-val)
           {:status 400
