@@ -1,7 +1,8 @@
 (ns user
   (:require [clojure.java.io :as io]
             [integrant.core :as ig]
-            [integrant.repl :as ig-repl]))
+            [integrant.repl :as ig-repl]
+            [integrant.repl.state :refer [system]]))
 
 (ig-repl/set-prep!
  (fn []
@@ -19,6 +20,9 @@
 (defn stop-server
   []
   (ig-repl/halt))
+
+(defn get-db []
+  (:omniward.postgres.db/pg-db system))
 
 (defn restart-server
   []

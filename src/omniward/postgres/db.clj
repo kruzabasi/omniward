@@ -1,6 +1,5 @@
 (ns omniward.postgres.db
   (:require [integrant.core :as ig]
-            [integrant.repl.state :refer [system]]
             [clojure.java.jdbc :as j]
             [java-time.api :as jt]))
 
@@ -8,12 +7,9 @@
   [_ config]
   config)
 
-(defn get-db []
-  (:omniward.postgres.db/pg-db system))
-
 (def patients-sql
   (j/create-table-ddl
-   :patient 
+   :patient
    [[:patient_id :serial "PRIMARY KEY"]
     [:name "VARCHAR(255)"]
     [:gender "VARCHAR(10)"]
@@ -22,20 +18,21 @@
     [:phone "VARCHAR(20)"]
     [:CONSTRAINT :unique_patient "UNIQUE(name, dob)"]]))
 
-(defn create-patients-table []
-  (let [db-spec (get-db)]
+(defn create-patients-table
+  [db]
+  (let [db-spec db]
     (j/execute! db-spec patients-sql)))
 
 (defn get-patient-info
   [db-spec patient-id]
-  (j/query 
-   db-spec 
+  (j/query
+   db-spec
    ["select * from patient where patient_id = ?" patient-id]))
 
 (defn get-patients
   ([db-spec]
    (get-patients db-spec {:offset nil :limit 100}))
-  
+
   ([db-spec {:keys [offset limit]}]
    (let [limit     (or limit 100)
          query-str (cond-> (str "select * from patient limit " limit)

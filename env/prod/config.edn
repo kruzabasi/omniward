@@ -1,0 +1,8 @@
+{:omniward.server/server     {:port 8081
+                              :handler #ig/ref :omniward.core/app}
+ :omniward.core/app          {:postgres #ig/ref :omniward.postgres.db/pg-db}
+ :omniward.postgres.db/pg-db {:dbtype "postgresql"
+                              :port 5432
+                              :user "admin"
+                              :dbname "omniward"
+                              :password "admin"}}
