@@ -5,3 +5,5 @@
 .m2
 .nrepl-port
 .idea
+.DS_Store
+target
