@@ -12,9 +12,13 @@
  
  :aliases {:dev  {:extra-paths ["env/dev" "dev"]
                   :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
-           
+
+           :prod {:extra-paths ["env/prod"]}
+
            :test {:extra-paths ["test"]
                   :extra-deps  {integrant/repl {:mvn/version "0.3.2"}
                                 com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                                            :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
-                  :main-opts   ["-m" "cognitect.test-runner"]}}}
+                  :main-opts   ["-m" "cognitect.test-runner"]}
+           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.9.4" :git/sha "76b78fe"}}
+                   :ns-default build}}}
