@@ -5,4 +5,5 @@
                               :port 5432
                               :user "admin"
                               :dbname "omniward"
+                              :host   "omniward.db"
                               :password "admin"}}

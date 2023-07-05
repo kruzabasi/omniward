@@ -61,7 +61,8 @@ To run the tests for the OmniWard application, use the following command:
 ```bash
 clj -M:test
 ```
-This will execute the tests and provide feedback on the test results.5
+This will execute the tests and provide feedback on the test results.
+
 7. Build an Uber JAR:
 To build an Uber JAR of the application, use the following command:
 ```bash
