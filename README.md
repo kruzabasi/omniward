@@ -1,6 +1,6 @@
 # Omniward
 
-OmniWard is a Clojure application for managing patient data. It provides a CRUD API for patient records and is built with Clojure and PostgreSQL.
+OmniWard is a Clojure application for managing patient data. It provides a CRUD API for patient records and is built with Clojure and PostgreSQL.This project is built as a test demo for health-samurai
 
 ## Requirements
 
