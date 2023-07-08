@@ -20,7 +20,7 @@ jobs:
          ports: 
            - 5432:5432
          volumes: 
-           - ~/migrations/10-init.sql:/docker-entrypoint-initdb.d/10-init.sql
+           - /migrations/10-init.sql:/docker-entrypoint-initdb.d/10-init.sql
 
     steps:
       - name: Checkout
