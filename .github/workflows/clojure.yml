@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v3
         with:
          path: |
-            ~/.m2/repository
+            ~/.m2
          key: cljdeps-${{ hashFiles('deps.edn') }}
          restore-keys: cljdeps-
       - name: Execute clojure code
