@@ -46,7 +46,13 @@
 (s/def :patient/dob     (s/with-gen
                           #(try
                              (jt/after? (jt/local-date) (jt/local-date %))
-                             (catch Exception _ false))
+                             (catch clojure.lang.ExceptionInfo e
+                               (if (= "Conversion failed" (.getMessage e))
+                                 (throw
+                                  (ex-info
+                                   "Invalid date format"
+                                   {:cause (ex-message (ex-cause e))}))
+                                 (throw e))))
 
                           #(gen/fmap
                             (fn [[day month year]]
