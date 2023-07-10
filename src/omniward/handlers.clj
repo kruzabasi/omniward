@@ -1,7 +1,11 @@
 (ns omniward.handlers
   (:require
    [omniward.postgres.db :as db]
-   [java-time.api :as jt]))
+   [java-time.api :as jt]
+   [clojure.spec.alpha :as s]
+   [omniward.specs.patient :as specs]))
+
+(s/check-asserts true)
 
 (defn get-all-patients
   [{:keys [query-params sys]}]
@@ -33,6 +37,7 @@
   [{:keys [parameters sys]}]
   (let [patient-data (-> parameters :body)
         db-spec      (-> sys :postgres)]
+    (s/assert ::specs/patient-data patient-data)
     (try
       (let [new-patient (db/insert-patient db-spec patient-data)]
         {:status 201
@@ -53,11 +58,17 @@
     (try
       (let [patient-id   (Integer/parseInt (:id path-params))
             update-val   (cond-> {}
-                           p-name  (assoc :name p-name)
-                           dob     (assoc :dob (jt/local-date  dob))
-                           gender  (assoc :gender gender)
-                           phone   (assoc :phone phone)
-                           address (assoc :address address))]
+                           p-name  (assoc :name
+                                          (s/assert :patient/p-name p-name))
+                           dob     (assoc :dob
+                                          (jt/local-date
+                                           (s/assert :patient/dob dob)))
+                           gender  (assoc :gender  
+                                          (s/assert :patient/gender gender))
+                           phone   (assoc :phone   
+                                          (s/assert :patient/gender phone))
+                           address (assoc :address
+                                          (s/assert :patient/address address)))]
         (if (empty? update-val)
           {:status 400
            :body  "Missing or Invalid Parameters"}
@@ -72,7 +83,10 @@
                             :body (str "Patient with id: " patient-id " does not exist")}))))
       (catch NumberFormatException _
         {:status 400
-         :body "Invalid Patient ID"}))))
+         :body "Invalid Patient ID"})
+      (catch clojure.lang.ExceptionInfo e
+        {:status 500
+         :body  (.getMessage e)}))))
 
 (defn delete-patient!
   [{:keys [parameters sys]}]

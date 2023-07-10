@@ -2,8 +2,10 @@
   (:require [muuntaja.core :as m]
             [reitit.ring :as ring]
             [reitit.ring.spec :as rs]
+            [clojure.spec.alpha :as s]
             [omniward.middleware :as mw]
             [reitit.dev.pretty :as pretty]
+            [omniward.specs.patient :as specs]
             [reitit.ring.coercion :as coercion]
             [reitit.coercion.spec :as coercion-spec]
             [ring.middleware.cors :refer [wrap-cors]]
@@ -48,7 +50,7 @@
                :handler    handler/new-patient!}}]
     ["/:id"
      {:get    {:summary     "Fetches info of a particular patient"
-               :responses   {200 {:body map?}
+               :responses   {200 {:body #(s/valid? ::specs/patient-data %)}
                              400 {:body string?}
                              404 {:body string?}}
                :parameters  {:path {:id string?}}
@@ -56,7 +58,8 @@
       :put    {:summary     "Updates an existing patients record"
                :responses   {200 {:body map?}
                              400 {:body string?}
-                             404 {:body string?}}
+                             404 {:body string?}
+                             500 {:body string?}}
                :handler    handler/modify-patient!}
       :delete {:summary "Delete a patients record"
                :responses   {200 {:body string?}

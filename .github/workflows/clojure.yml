@@ -27,9 +27,6 @@ jobs:
          services: |
            db
            
-      - name: Run Unit Tests
-        run: clojure -M:test
-        
       - name: Cache clojure dependencies
         uses: actions/cache@v3
         with:
@@ -37,3 +34,6 @@ jobs:
             ./.m2
          key: cljdeps-${{ hashFiles('deps.edn') }}
          restore-keys: cljdeps-
+         
+      - name: Run Unit Tests
+        run: clojure -M:test
