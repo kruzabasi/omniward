@@ -21,7 +21,7 @@
 (s/def :patient/p-name (s/with-gen
                          (s/and
                           string?
-                          #(>= (count %) 2)
+                          #(>= 40 (count %) 2)
                           #(re-matches name-pattern %))
 
                          #(gen/fmap

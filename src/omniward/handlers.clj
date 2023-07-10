@@ -7,14 +7,35 @@
 
 (s/check-asserts true)
 
+(defn patient-params->map
+  "Validates and transforms patient request parameters into a map.
+   Throws a spec error if any non-nil parameter fails validation.
+   Ignores nil parameters"
+  [p-name dob gender address phone]
+  (cond-> {}
+    p-name  (assoc :name
+                   (s/assert :patient/p-name p-name))
+    dob     (assoc :dob
+                   (jt/local-date
+                    (s/assert :patient/dob dob)))
+    gender  (assoc :gender
+                   (s/assert :patient/gender gender))
+    phone   (assoc :phone
+                   (s/assert :patient/gender phone))
+    address (assoc :address
+                   (s/assert :patient/address address))))
+
 (defn get-all-patients
   [{:keys [query-params sys]}]
-  (let [{:strs [offset limit]} query-params
+  (let [{:strs [offset limit
+                p-name dob gender address phone]} query-params
         db-spec (-> sys :postgres)
+        params  (patient-params->map
+                 p-name dob gender address phone)
         res     (into []
                       (db/get-patients
                        db-spec
-                       {:offset offset :limit limit}))]
+                       {:offset offset :limit limit :params params}))]
     {:status 200
      :body {:data res}}))
 
@@ -57,18 +78,8 @@
         {:strs [p-name dob gender address phone]} query-params]
     (try
       (let [patient-id   (Integer/parseInt (:id path-params))
-            update-val   (cond-> {}
-                           p-name  (assoc :name
-                                          (s/assert :patient/p-name p-name))
-                           dob     (assoc :dob
-                                          (jt/local-date
-                                           (s/assert :patient/dob dob)))
-                           gender  (assoc :gender  
-                                          (s/assert :patient/gender gender))
-                           phone   (assoc :phone   
-                                          (s/assert :patient/gender phone))
-                           address (assoc :address
-                                          (s/assert :patient/address address)))]
+            update-val   (patient-params->map
+                          p-name dob gender address phone)]
         (if (empty? update-val)
           {:status 400
            :body  "Missing or Invalid Parameters"}
