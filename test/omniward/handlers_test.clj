@@ -6,7 +6,7 @@
 
 (deftest get-all-patients-test
   (testing "Fetching all patients"
-    (insert-patient test-db-spec patient-data)
+    (insert-patient test-db-spec (patient-data))
     (let [args {:sys {:postgres test-db-spec}}
           res  (SUT/get-all-patients args)]
       (is (= 200 (:status res)))
@@ -14,7 +14,7 @@
 
 (deftest new-patient!-test
   (let [args {:sys {:postgres test-db-spec}
-              :parameters {:body patient-data}}]
+              :parameters {:body (patient-data)}}]
     (testing "Inserting a new patient!"
       (let [res (SUT/new-patient! args)]
         (is (= 201 (:status res)))
@@ -26,7 +26,7 @@
 (deftest get-patient-test
   (let [args {:sys {:postgres test-db-spec}
               :parameters {:path {:id "1"}}}]
-    (insert-patient test-db-spec patient-data)
+    (insert-patient test-db-spec (patient-data))
     (testing "Requesting a patients info"
       (let [res (SUT/get-patient args)]
         (is (= 200 (:status res)))
@@ -45,7 +45,7 @@
   (let [args {:sys {:postgres test-db-spec}
               :path-params  {:id "1"}
               :query-params {"address" "102 Palm Ave, Vienna"}}]
-    (insert-patient test-db-spec patient-data)
+    (insert-patient test-db-spec (patient-data))
     (testing "Modifying a patients record!"
       (let [res (SUT/modify-patient! args)]
         (is (= 200 (:status res)))
@@ -61,7 +61,7 @@
         (is (= "Missing or Invalid Parameters" (:body res)))))))
 
 (deftest delete-patient!-test
-  (insert-patient test-db-spec patient-data)
+  (insert-patient test-db-spec (patient-data))
   (let [args {:sys {:postgres test-db-spec}
               :parameters {:path {:id "1"}}}]
     (testing "Requesting deletion of a patients record"
