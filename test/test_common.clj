@@ -1,6 +1,7 @@
 (ns test-common
-  (:require [clojure.java.jdbc :as j]
-            [java-time.api :as jt]))
+  (:require
+   [clojure.java.jdbc :as j]
+   [omniward.specs.patient :as specs]))
 
 (def test-db-spec
   {:dbtype "postgresql"
@@ -26,16 +27,13 @@
 (defn drop-test-db []
   (j/execute! test-db-spec "DROP TABLE IF EXISTS patient"))
 
-(def patient-data
-  {:p-name "Jane Smith"
-   :gender "Female"
-   :dob (jt/local-date (jt/sql-date 1995 6 21))
-   :address "456 Elm St"
-   :phone "555-5678"})
-
 (defn db-fixture
   [test-fn]
   (try
     (create-test-db)
     (test-fn)
     (finally (drop-test-db))))
+
+(defn patient-data
+  []
+  (specs/create ::specs/patient-data))
