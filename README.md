@@ -6,8 +6,8 @@ OmniWard is a Clojure application for managing patient data. It provides a CRUD 
 
 Before running the application locally, make sure you have the following installed:
 
-Docker
-Clojure
+* Docker
+* Clojure
 
 ## How to Run Locally
 
