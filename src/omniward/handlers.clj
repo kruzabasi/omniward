@@ -22,7 +22,7 @@
     gender  (assoc :gender
                    (s/assert :patient/gender gender))
     phone   (assoc :phone
-                   (s/assert :patient/gender phone))
+                   (s/assert :patient/phone phone))
     address (assoc :address
                    (s/assert :patient/address address))))
 
