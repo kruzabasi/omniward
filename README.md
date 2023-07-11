@@ -25,17 +25,12 @@ cd omniward
 ```bash
 docker-compose -f omniward.yaml up
 ```
-This command will start the PostgreSQL container, which is required for running the application. Ensure that the database is running and accessible before proceeding.
+This command will start the PostgreSQL container, which is required for running the application.
+two new tables are created if they don't already exist: omniward and omniward_test.
+Ensure that the database is running and accessible before proceeding.
 
-4. Create the required databases (this should be run from the postgres containers terminal):
-```bash
-psql -U admin
-```
-This command opens the PostgreSQL shell. 
-Run the following commands within the shell to create the omniward and omniward_test databases:
-```bash
-CREATE DATABASE omniward;
-CREATE DATABASE omniward_test;
+PS: If UberJar and omniward docker image hasn't been built. 
+You would have to comment out the api service in 'omniward.yaml' and then start the server from repl
 ```
 5. Start the application in development mode:
 ```bash
