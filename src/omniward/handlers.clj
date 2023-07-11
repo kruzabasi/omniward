@@ -3,6 +3,7 @@
    [omniward.postgres.db :as db]
    [java-time.api :as jt]
    [clojure.spec.alpha :as s]
+   [clojure.string :as string]
    [omniward.specs.patient :as specs]))
 
 (s/check-asserts true)
@@ -30,6 +31,7 @@
   (let [{:strs [offset limit
                 p-name dob gender address phone]} query-params
         db-spec (-> sys :postgres)
+        gender  (when gender (string/lower-case gender))
         params  (patient-params->map
                  p-name dob gender address phone)
         res     (into []
@@ -56,7 +58,9 @@
 
 (defn new-patient!
   [{:keys [parameters sys]}]
-  (let [patient-data (-> parameters :body)
+  (let [patient-data (-> parameters
+                         :body
+                         (update :gender #(string/lower-case %)))
         db-spec      (-> sys :postgres)]
     (s/assert ::specs/patient-data patient-data)
     (try
@@ -77,7 +81,8 @@
   (let [db-spec (-> sys :postgres)
         {:strs [p-name dob gender address phone]} query-params]
     (try
-      (let [patient-id   (Integer/parseInt (:id path-params))
+      (let [gender       (when gender (string/lower-case gender))
+            patient-id   (Integer/parseInt (:id path-params))
             update-val   (patient-params->map
                           p-name dob gender address phone)]
         (if (empty? update-val)
